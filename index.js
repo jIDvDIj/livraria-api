@@ -1,60 +1,31 @@
 const express = require('express');
+const setupDb = require('./database');
 const app = express();
 const PORT = 8080;
 
 app.use(express.json());
 
-let livros = [
-    { id: 1, titulo: "Dom Casmurro", autor: "Machado de Assis" }
-];
+let db;
 
-// Rota GET: Obter produtos
-app.get('/api/livros', (req, res) => {
-    res.status(200).json(livros);
-});
+// Inicializa o banco e as rotas
+(async () => {
+    db = await setupDb();
 
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
-
-// Rota POST: Armazenar um produto
-app.post('/api/livros', (req, res) => {
-    const { titulo, autor } = req.body;
-    const novoLivro = { id: livros.length + 1, titulo, autor };
-    livros.push(novoLivro);
-    res.status(201).json({ message: "Livro cadastrado!", livro: novoLivro });
-});
-
-// Rota DELETE: Remover um produto pelo ID
-app.delete('/api/livros/:id', (req, res) => {
-    const { id } = req.params;
-    const index = livros.findIndex(l => l.id === parseInt(id));
-
-    if (index === -1) {
-        return res.status(404).json({ message: "Livro não encontrado!" });
-    }
-
-    const livroRemovido = livros.splice(index, 1);
-    res.status(200).json({ 
-        message: "Livro removido com sucesso!", 
-        livro: livroRemovido[0] 
+    app.get('/api/livros', async (req, res) => {
+        const livros = await db.all('SELECT * FROM livros');
+        res.json(livros);
     });
-});
 
-// Rota PUT: Atualizar um livro existente pelo ID
-app.put('/api/livros/:id', (req, res) => {
-    const { id } = req.params;
-    const { titulo, autor } = req.body;
-    
-    const livro = livros.find(l => l.id === parseInt(id));
+    app.post('/api/livros', async (req, res) => {
+        const { titulo, autor } = req.body;
+        const result = await db.run('INSERT INTO livros (titulo, autor) VALUES (?, ?)', [titulo, autor]);
+        res.status(201).json({ id: result.lastID, titulo, autor });
+    });
 
-    if (!livro) {
-        return res.status(404).json({ message: "Livro não encontrado para atualização!" });
-    }
+    app.delete('/api/livros/:id', async (req, res) => {
+        await db.run('DELETE FROM livros WHERE id = ?', [req.params.id]);
+        res.json({ message: "Livro removido!" });
+    });
 
-    // Atualiza apenas os campos enviados
-    if (titulo) livro.titulo = titulo;
-    if (autor) livro.autor = autor;
-
-    res.status(200).json({ message: "Livro atualizado com sucesso!", livro });
-});
+    app.listen(PORT, () => console.log(`Servidor em http://localhost:${PORT}`));
+})();

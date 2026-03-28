@@ -27,6 +27,19 @@ Uma API robusta para gerenciamento de acervo de livros, desenvolvida com Node.js
 
 ---
 
+## Persistência de Dados
+O projeto utiliza **SQLite** para armazenamento persistente, garantindo que os dados não sejam perdidos ao reiniciar o servidor.
+
+## Conceitos de Microserviços
+A aplicação foi refatorada seguindo a **Separação de Camadas**:
+- `database.js`: Módulo isolado de infraestrutura de dados.
+- `index.js`: Ponto de entrada e gerenciamento de rotas.
+Essa estrutura facilita a escalabilidade, permitindo que o serviço de dados seja facilmente substituído ou isolado em um microserviço dedicado no futuro.
+
+## Dependências Adicionais
+- `sqlite3`: Driver do banco de dados.
+- `sqlite`: Wrapper para suporte a Promises/Async-Await.
+
 ## Workflow de Trabalho: Gitflow
 
 Este projeto utiliza o modelo **Gitflow** para garantir a integridade do código em produção:
