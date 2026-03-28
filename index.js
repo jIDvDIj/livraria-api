@@ -40,3 +40,21 @@ app.delete('/api/livros/:id', (req, res) => {
         livro: livroRemovido[0] 
     });
 });
+
+// Rota PUT: Atualizar um livro existente pelo ID
+app.put('/api/livros/:id', (req, res) => {
+    const { id } = req.params;
+    const { titulo, autor } = req.body;
+    
+    const livro = livros.find(l => l.id === parseInt(id));
+
+    if (!livro) {
+        return res.status(404).json({ message: "Livro não encontrado para atualização!" });
+    }
+
+    // Atualiza apenas os campos enviados
+    if (titulo) livro.titulo = titulo;
+    if (autor) livro.autor = autor;
+
+    res.status(200).json({ message: "Livro atualizado com sucesso!", livro });
+});
