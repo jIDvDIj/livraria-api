@@ -24,3 +24,19 @@ app.post('/api/livros', (req, res) => {
     livros.push(novoLivro);
     res.status(201).json({ message: "Livro cadastrado!", livro: novoLivro });
 });
+
+// Rota DELETE: Remover um produto pelo ID
+app.delete('/api/livros/:id', (req, res) => {
+    const { id } = req.params;
+    const index = livros.findIndex(l => l.id === parseInt(id));
+
+    if (index === -1) {
+        return res.status(404).json({ message: "Livro não encontrado!" });
+    }
+
+    const livroRemovido = livros.splice(index, 1);
+    res.status(200).json({ 
+        message: "Livro removido com sucesso!", 
+        livro: livroRemovido[0] 
+    });
+});
