@@ -1,0 +1,9 @@
+services:
+  livraria-api:
+    build: .
+    container_name: livraria-container
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./database.db:/usr/src/app/database.db
+    restart: always

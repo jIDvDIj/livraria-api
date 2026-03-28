@@ -57,12 +57,22 @@ Para facilitar os testes, incluímos um script de semente que popula o banco de 
 Execute o comando abaixo no terminal:
 ```bash
 npm run seed
+```
 
 ## Camada de Validação
 Implementamos o **Zod** para validação de esquemas. Isso garante que:
 - O `titulo` e `autor` sejam obrigatórios em novos cadastros.
 - Ambos os campos tenham no mínimo 3 caracteres.
 - Payload mal formatado retorne um erro `400 Bad Request` detalhado, protegendo o banco de dados.
+
+## 🐳 Executando com Docker
+
+Se você tem o Docker instalado, não precisa configurar o Node.js manualmente.
+
+1. **Construir e subir o container:**
+   ```bash
+   docker-compose up -d --build
+   ```
 
 ---
 
