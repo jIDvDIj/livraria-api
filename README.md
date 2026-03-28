@@ -1,17 +1,46 @@
-# API Livraria REST
+#  API Livraria REST
 
-Este projeto é um exemplo de API desenvolvida seguindo o fluxo Gitflow.
+Uma API robusta para gerenciamento de acervo de livros, desenvolvida com Node.js e Express, utilizando as melhores práticas de versionamento e automação.
 
-## Como Executar
-1. Instale as dependências: `npm install`
-2. Inicie a API: `node index.js`
-3. A porta padrão é `8080`.
+---
 
-## Endpoints
-| Método | Rota | Descrição |
-| :--- | :--- | :--- |
-| GET | `/api/livros` | Lista todos os livros cadastrados. |
-| POST | `/api/livros` | Cadastra um novo livro. |
+##  Como Executar o Projeto
 
-## Workflow: Gitflow
-Utilizei o **Gitflow** por ser um modelo que separa claramente o código em desenvolvimento (`develop`), funcionalidades em teste (`feature`) e código estável pronto para produção (`main`). Isso evita conflitos e garante que a branch principal nunca receba código quebrado.
+1. **Clone o repositório:**
+   `git clone https://github.com/seu-usuario/livraria-api.git`
+2. **Instale as dependências:**
+   `npm install`
+3. **Inicie o servidor:**
+   `node index.js`
+4. **Acesse em:** `http://localhost:8080/api/livros`
+
+---
+
+## Endpoints Disponíveis
+
+| Método | Rota | Descrição | Exemplo de Payload (JSON) |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/api/livros` | Lista todos os livros | N/A |
+| **POST** | `/api/livros` | Cadastra um novo livro | `{"titulo": "O Alquimista", "autor": "Paulo Coelho"}` |
+| **DELETE** | `/api/livros/:id` | Remove um livro pelo ID | N/A (Passar ID na URL) |
+
+---
+
+## Workflow de Trabalho: Gitflow
+
+Este projeto utiliza o modelo **Gitflow** para garantir a integridade do código em produção:
+
+* **`main`**: Apenas código estável e testado (Produção).
+* **`develop`**: Branch principal para integração de novas funcionalidades.
+* **`feature/*`**: Branches temporárias para o desenvolvimento de rotas específicas (ex: `feature/deletar-livro`).
+
+**Por que Gitflow?** Escolhi este workflow pela necessidade de isolamento. Com ele, garantimos que a branch `main` nunca seja quebrada, pois toda funcionalidade passa por um ciclo de testes na `develop` antes do merge final.
+
+---
+
+## CI (GitHub Actions)
+
+O projeto conta com pipelines de automação:
+* **Integração Contínua (CI):** Roda a cada push na `develop` ou `main`, verificando se a aplicação instala e sobe corretamente.
+
+---
