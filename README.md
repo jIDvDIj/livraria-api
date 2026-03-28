@@ -1,3 +1,5 @@
+**Por que Gitflow?** Escolhi este workflow pela necessidade de isolamento. Com ele, garantimos que a branch `main` nunca seja quebrada, pois toda funcionalidade passa por um ciclo de testes na `develop` antes do merge final.
+
 #  API Livraria REST
 
 Uma API robusta para gerenciamento de acervo de livros, desenvolvida com Node.js e Express, utilizando as melhores práticas de versionamento e automação.
@@ -48,7 +50,13 @@ Este projeto utiliza o modelo **Gitflow** para garantir a integridade do código
 * **`develop`**: Branch principal para integração de novas funcionalidades.
 * **`feature/*`**: Branches temporárias para o desenvolvimento de rotas específicas (ex: `feature/deletar-livro`).
 
-**Por que Gitflow?** Escolhi este workflow pela necessidade de isolamento. Com ele, garantimos que a branch `main` nunca seja quebrada, pois toda funcionalidade passa por um ciclo de testes na `develop` antes do merge final.
+## Ambiente de Teste e Semente
+Para facilitar os testes, incluímos um script de semente que popula o banco de dados automaticamente.
+
+### Como popular o banco:
+Execute o comando abaixo no terminal:
+```bash
+npm run seed
 
 ---
 
