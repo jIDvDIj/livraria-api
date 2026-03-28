@@ -1,0 +1,30 @@
+name: Node.js CI (Gitflow)
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    - name: Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Instalar dependências
+      run: npm install
+
+    - name: Verificar se o servidor inicia
+      run: |
+        node index.js & 
+        sleep 5 && 
+        curl http://localhost:8080/api/livros
