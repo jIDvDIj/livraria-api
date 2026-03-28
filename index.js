@@ -16,3 +16,11 @@ app.get('/api/livros', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
+
+// Rota POST: Armazenar um produto
+app.post('/api/livros', (req, res) => {
+    const { titulo, autor } = req.body;
+    const novoLivro = { id: livros.length + 1, titulo, autor };
+    livros.push(novoLivro);
+    res.status(201).json({ message: "Livro cadastrado!", livro: novoLivro });
+});
