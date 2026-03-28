@@ -65,3 +65,5 @@ let db;
 
     app.listen(PORT, () => console.log(`Servidor validado em http://localhost:${PORT}`));
 })();
+
+module.exports = app;

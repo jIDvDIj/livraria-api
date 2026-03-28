@@ -65,7 +65,7 @@ Implementamos o **Zod** para validação de esquemas. Isso garante que:
 - Ambos os campos tenham no mínimo 3 caracteres.
 - Payload mal formatado retorne um erro `400 Bad Request` detalhado, protegendo o banco de dados.
 
-## 🐳 Executando com Docker
+## Executando com Docker
 
 Se você tem o Docker instalado, não precisa configurar o Node.js manualmente.
 
@@ -75,6 +75,18 @@ Se você tem o Docker instalado, não precisa configurar o Node.js manualmente.
    ```
 
 ---
+
+## Testes Automatizados
+Utilizamos **Jest** e **Supertest** para garantir a qualidade das rotas.
+Os testes verificam:
+- Disponibilidade da rota de listagem.
+- Persistência correta via POST.
+- Eficácia da validação de dados (Zod).
+
+Para rodar os testes localmente:
+```bash
+npm test
+```
 
 ## CI (GitHub Actions)
 

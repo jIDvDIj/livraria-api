@@ -28,3 +28,6 @@ jobs:
         node index.js & 
         sleep 5 && 
         curl http://localhost:8080/api/livros
+
+    - name: Executar Testes Automatizados
+      run: npm test
