@@ -58,6 +58,12 @@ Execute o comando abaixo no terminal:
 ```bash
 npm run seed
 
+## Camada de Validação
+Implementamos o **Zod** para validação de esquemas. Isso garante que:
+- O `titulo` e `autor` sejam obrigatórios em novos cadastros.
+- Ambos os campos tenham no mínimo 3 caracteres.
+- Payload mal formatado retorne um erro `400 Bad Request` detalhado, protegendo o banco de dados.
+
 ---
 
 ## CI (GitHub Actions)
