@@ -49,22 +49,22 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 /**
  * @openapi
  * /api/livros:
- * get:
- * summary: Retorna todos os livros ou filtra por título/autor
- * parameters:
- * - in: query
- * name: titulo
- * schema:
- * type: string
- * description: Parte do título do livro
- * - in: query
- * name: autor
- * schema:
- * type: string
- * description: Parte do nome do autor
- * responses:
- * 200:
- * description: Lista de livros enviada com sucesso.
+ *   get:
+ *     summary: Retorna todos os livros ou filtra por título/autor
+ *     parameters:
+ *       - in: query
+ *         name: titulo
+ *         schema:
+ *           type: string
+ *         description: Parte do título do livro
+ *       - in: query
+ *         name: autor
+ *         schema:
+ *           type: string
+ *         description: Parte do nome do autor
+ *     responses:
+ *       '200':
+ *         description: Lista de livros filtrada ou completa.
  */
 app.get('/api/livros', async (req, res) => {
     const { titulo, autor } = req.query;
