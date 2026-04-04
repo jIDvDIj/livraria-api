@@ -9,7 +9,6 @@ const PORT = 8080;
 
 app.use(express.json());
 
-// Esquema de validação (Schema)
 const livroSchema = z.object({
     titulo: z.string().min(3, "O título deve ter pelo menos 3 caracteres"),
     autor: z.string().min(3, "O nome do autor deve ter pelo menos 3 caracteres")
@@ -17,16 +16,19 @@ const livroSchema = z.object({
 
 let db;
 
-// Inicialização do Banco (Separada do registro das rotas)
-setupDb().then(database => {
+const dbPromise = setupDb().then(database => {
     db = database;
-    // Só inicia o servidor se não estivermos em ambiente de teste
     if (process.env.NODE_ENV !== 'test') {
         app.listen(PORT, () => console.log(`Servidor rodando em http://localhost:${PORT}`));
     }
+    return database;
 });
 
-// Configurações do Swagger
+app.use(async (req, res, next) => {
+    if (!db) await dbPromise;
+    next();
+});
+
 const swaggerOptions = {
     definition: {
         openapi: '3.0.0',
@@ -37,6 +39,7 @@ const swaggerOptions = {
     },
     apis: ['./index.js'],
 };
+
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
@@ -61,8 +64,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
  * description: Lista de livros enviada com sucesso.
  */
 app.get('/api/livros', async (req, res) => {
-    if (!db) return res.status(503).json({ message: "Banco carregando..." });
-    
     const { titulo, autor } = req.query;
     let query = 'SELECT * FROM livros';
     let params = [];
@@ -79,19 +80,14 @@ app.get('/api/livros', async (req, res) => {
             params.push(`%${autor}%`);
         }
     }
-
     const livros = await db.all(query, params);
     res.json(livros);
 });
 
 app.post('/api/livros', async (req, res) => {
-    if (!db) return res.status(503).json({ message: "Banco carregando..." });
     try {
         const dadosValidados = livroSchema.parse(req.body);
-        const result = await db.run(
-            'INSERT INTO livros (titulo, autor) VALUES (?, ?)', 
-            [dadosValidados.titulo, dadosValidados.autor]
-        );
+        const result = await db.run('INSERT INTO livros (titulo, autor) VALUES (?, ?)', [dadosValidados.titulo, dadosValidados.autor]);
         res.status(201).json({ id: result.lastID, ...dadosValidados });
     } catch (error) {
         res.status(400).json({ status: "Erro de Validação", detalhes: error.errors });
@@ -103,12 +99,11 @@ app.put('/api/livros/:id', async (req, res) => {
         const partialSchema = livroSchema.partial();
         const dadosValidados = partialSchema.parse(req.body);
         const livroExistente = await db.get('SELECT * FROM livros WHERE id = ?', [req.params.id]);
-        
         if (!livroExistente) return res.status(404).json({ message: "Livro não encontrado" });
-
+        
         const novoTitulo = dadosValidados.titulo || livroExistente.titulo;
         const novoAutor = dadosValidados.autor || livroExistente.autor;
-
+        
         await db.run('UPDATE livros SET titulo = ?, autor = ? WHERE id = ?', [novoTitulo, novoAutor, req.params.id]);
         res.json({ id: req.params.id, titulo: novoTitulo, autor: novoAutor });
     } catch (error) {
@@ -120,3 +115,5 @@ app.delete('/api/livros/:id', async (req, res) => {
     await db.run('DELETE FROM livros WHERE id = ?', [req.params.id]);
     res.json({ message: "Livro removido!" });
 });
+
+module.exports = app;
