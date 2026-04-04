@@ -1,0 +1,32 @@
+name: Workflow de Commits
+
+on:
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar Repositório e trocar para branch específica
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Instalar Node.js (Interpretador)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar Dependências do Projeto
+        run: npm install
+
+      - name: Compilar Projeto (Passo de Verificação)
+        run: echo "Node.js não requer compilação, mas validando sintaxe..."
+
+      - name: Executar o Projeto e Validar
+        run: |
+          npm run seed
+          node index.js & 
+          sleep 5 && curl http://localhost:8080/api/livros

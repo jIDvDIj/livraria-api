@@ -88,9 +88,16 @@ Para rodar os testes localmente:
 npm test
 ```
 
-## CI (GitHub Actions)
+## Automação de Workflows (GitHub Actions)
 
-O projeto conta com pipelines de automação:
-* **Integração Contínua (CI):** Roda a cada push na `develop` ou `main`, verificando se a aplicação instala e sobe corretamente.
+O repositório agora possui dois fluxos de trabalho distintos:
+
+1. **Workflow de Commits (`push`):**
+   - Disparado em envios diretos para `main` e `develop`.
+   - Realiza o setup do ambiente, instalação de dependências e execução de fumaça (smoke test) para garantir que o servidor sobe.
+
+2. **Workflow de Pull Request (`pull_request`):**
+   - Disparado em pedidos de integração de código.
+   - Além do setup e execução, este fluxo foca na validação da qualidade e testes antes de permitir o merge.
 
 ---
