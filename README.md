@@ -23,6 +23,8 @@ Uma API robusta para gerenciamento de acervo de livros, desenvolvida com Node.js
 | Método | Rota | Descrição | Exemplo de Payload (JSON) |
 | :--- | :--- | :--- | :--- |
 | **GET** | `/api/livros` | Lista todos os livros | N/A |
+| GET | `/api/livros?titulo=...` | Busca livros por parte do título | N/A |
+| GET | `/api/livros?autor=...`  | Busca livros por parte do autor  | N/A |
 | **POST** | `/api/livros` | Cadastra um novo livro | `{"titulo": "O Alquimista", "autor": "Paulo Coelho"}` |
 | **DELETE** | `/api/livros/:id` | Remove um livro pelo ID | N/A (Passar ID na URL) |
 | PUT | `/api/livros/:id` | Atualiza dados de um livro | `{"titulo": "Novo Nome"}` |

@@ -53,10 +53,47 @@ let db;
         }
     });
 
-    app.get('/api/livros', async (req, res) => {
-        const livros = await db.all('SELECT * FROM livros');
-        res.json(livros);
-    });
+    /**
+ * @openapi
+ * /api/livros:
+ * get:
+ * summary: Retorna todos os livros ou filtra por título/autor
+ * parameters:
+ * - in: query
+ * name: titulo
+ * schema:
+ * type: string
+ * description: Parte do título do livro
+ * - in: query
+ * name: autor
+ * schema:
+ * type: string
+ * description: Parte do nome do autor
+ * responses:
+ * 200:
+ * description: Lista de livros filtrada ou completa.
+ */
+app.get('/api/livros', async (req, res) => {
+    const { titulo, autor } = req.query;
+    let query = 'SELECT * FROM livros';
+    let params = [];
+
+    if (titulo || autor) {
+        query += ' WHERE';
+        if (titulo) {
+            query += ' titulo LIKE ?';
+            params.push(`%${titulo}%`);
+        }
+        if (titulo && autor) query += ' AND';
+        if (autor) {
+            query += ' autor LIKE ?';
+            params.push(`%${autor}%`);
+        }
+    }
+
+    const livros = await db.all(query, params);
+    res.json(livros);
+});
 
     app.delete('/api/livros/:id', async (req, res) => {
         await db.run('DELETE FROM livros WHERE id = ?', [req.params.id]);
