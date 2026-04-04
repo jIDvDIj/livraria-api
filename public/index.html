@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livraria API - Sistema de Gestão</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-indigo-700">📚 Livraria Digital</h1>
+            <a href="/api-docs" class="text-sm text-gray-500 hover:underline">Documentação Swagger</a>
+        </header>
+
+        <section class="bg-white p-6 rounded-lg shadow-md mb-8 border-l-4 border-indigo-500">
+            <h2 class="text-xl font-semibold mb-4">Adicionar Novo Exemplar</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input id="titulo" type="text" placeholder="Título do Livro" class="input-field">
+                <input id="autor" type="text" placeholder="Autor" class="input-field">
+            </div>
+            <button id="btn-cadastrar" class="btn-primary mt-4">Cadastrar Livro</button>
+        </section>
+
+        <section class="bg-white rounded-lg shadow-md overflow-hidden">
+            <table class="w-full">
+                <thead class="bg-indigo-50">
+                    <tr>
+                        <th class="p-4 text-left text-indigo-900">ID</th>
+                        <th class="p-4 text-left text-indigo-900">Título</th>
+                        <th class="p-4 text-left text-indigo-900">Autor</th>
+                        <th class="p-4 text-center text-indigo-900">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-livros">
+                    </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>

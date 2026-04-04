@@ -1,0 +1,22 @@
+.input-field {
+    @apply border border-gray-300 p-2 rounded focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all;
+}
+
+.btn-primary {
+    @apply bg-indigo-600 text-white px-6 py-2 rounded font-semibold hover:bg-indigo-700 active:scale-95 transition-all;
+}
+
+tr:hover {
+    background-color: #f9fafb;
+}
+
+.btn-delete {
+    color: #ef4444;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.btn-delete:hover {
+    color: #b91c1c;
+    text-decoration: underline;
+}
