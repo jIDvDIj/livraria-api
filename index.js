@@ -6,8 +6,11 @@ const setupDb = require('./database');
 
 const app = express();
 const PORT = 8080;
+const cors = require('cors');
 
+app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
 
 const livroSchema = z.object({
     titulo: z.string().min(3, "O título deve ter pelo menos 3 caracteres"),

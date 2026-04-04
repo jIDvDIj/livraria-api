@@ -18,6 +18,13 @@ Uma API robusta para gerenciamento de acervo de livros, desenvolvida com Node.js
 
 ---
 
+## Interface Web
+A aplicação conta com uma interface visual para facilitar a gestão.
+Para acessar, basta iniciar o servidor e abrir:
+👉 [http://localhost:8080](http://localhost:8080)
+
+Desenvolvido com HTML5, Tailwind CSS e Vanilla JS, consumindo a API de forma assíncrona.
+
 ## Endpoints Disponíveis
 
 | Método | Rota | Descrição | Exemplo de Payload (JSON) |
