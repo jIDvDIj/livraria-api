@@ -28,5 +28,23 @@ jobs:
       - name: Executar o Projeto e Validar
         run: |
           npm run seed
-          node index.js & 
+          node index.js &
           sleep 5 && curl http://localhost:8080/api/livros
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar Repositório
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js (Interpretador)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar Dependências do Projeto
+        run: npm install
+
+      - name: Verificar estilo de código (ESLint)
+        run: npm run lint

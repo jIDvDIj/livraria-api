@@ -20,6 +20,9 @@ jobs:
       - name: Instalar Dependências
         run: npm install
 
+      - name: Verificar estilo de código (ESLint)
+        run: npm run lint
+
       - name: Executar Testes de Qualidade
         run: npm test
 
