@@ -57,12 +57,17 @@ describe('Testes da API de Livraria', () => {
         expect(resUpdate.statusCode).toEqual(400);
     });
 
-    it('Deve deletar um livro com sucesso (DELETE /api/livros/:id)', async () => {
-        const resCreate = await request(app).post('/api/livros').send({ titulo: "Livro para deletar", autor: "Autor" });
+    it('Deve deletar um livro com sucesso e retornar 204 (DELETE /api/livros/:id)', async () => {
+        const resCreate = await request(app).post('/api/livros').send({ titulo: "Livro para deletar", autor: "Autor Teste" });
         const id = resCreate.body.id;
 
         const resDelete = await request(app).delete(`/api/livros/${id}`);
-        expect(resDelete.statusCode).toEqual(200);
-        expect(resDelete.body.message).toBe("Livro removido!");
+        expect(resDelete.statusCode).toEqual(204);
+    });
+
+    it('Deve retornar 404 ao deletar livro inexistente (DELETE /api/livros/:id)', async () => {
+        const res = await request(app).delete('/api/livros/99999');
+        expect(res.statusCode).toEqual(404);
+        expect(res.body.message).toBe("Livro não encontrado");
     });
 });

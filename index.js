@@ -115,8 +115,10 @@ app.put('/api/livros/:id', async (req, res) => {
 });
 
 app.delete('/api/livros/:id', async (req, res) => {
+    const livro = await db.get('SELECT * FROM livros WHERE id = ?', [req.params.id]);
+    if (!livro) return res.status(404).json({ message: "Livro não encontrado" });
     await db.run('DELETE FROM livros WHERE id = ?', [req.params.id]);
-    res.json({ message: "Livro removido!" });
+    res.status(204).send();
 });
 
 module.exports = app;
