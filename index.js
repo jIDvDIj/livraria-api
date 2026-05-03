@@ -13,8 +13,8 @@ app.use(express.json());
 app.use(express.static('public'));
 
 const livroSchema = z.object({
-    titulo: z.string().min(3, "O título deve ter pelo menos 3 caracteres"),
-    autor: z.string().min(3, "O nome do autor deve ter pelo menos 3 caracteres")
+    titulo: z.string().min(3, 'O título deve ter pelo menos 3 caracteres'),
+    autor: z.string().min(3, 'O nome do autor deve ter pelo menos 3 caracteres')
 });
 
 let db;
@@ -93,7 +93,7 @@ app.post('/api/livros', async (req, res) => {
         const result = await db.run('INSERT INTO livros (titulo, autor) VALUES (?, ?)', [dadosValidados.titulo, dadosValidados.autor]);
         res.status(201).json({ id: result.lastID, ...dadosValidados });
     } catch (error) {
-        res.status(400).json({ status: "Erro de Validação", detalhes: error.errors });
+        res.status(400).json({ status: 'Erro de Validação', detalhes: error.errors });
     }
 });
 
@@ -102,7 +102,7 @@ app.put('/api/livros/:id', async (req, res) => {
         const partialSchema = livroSchema.partial();
         const dadosValidados = partialSchema.parse(req.body);
         const livroExistente = await db.get('SELECT * FROM livros WHERE id = ?', [req.params.id]);
-        if (!livroExistente) return res.status(404).json({ message: "Livro não encontrado" });
+        if (!livroExistente) return res.status(404).json({ message: 'Livro não encontrado' });
         
         const novoTitulo = dadosValidados.titulo || livroExistente.titulo;
         const novoAutor = dadosValidados.autor || livroExistente.autor;
@@ -110,13 +110,13 @@ app.put('/api/livros/:id', async (req, res) => {
         await db.run('UPDATE livros SET titulo = ?, autor = ? WHERE id = ?', [novoTitulo, novoAutor, req.params.id]);
         res.json({ id: req.params.id, titulo: novoTitulo, autor: novoAutor });
     } catch (error) {
-        res.status(400).json({ status: "Erro de Validação", detalhes: error.errors });
+        res.status(400).json({ status: 'Erro de Validação', detalhes: error.errors });
     }
 });
 
 app.delete('/api/livros/:id', async (req, res) => {
     const livro = await db.get('SELECT * FROM livros WHERE id = ?', [req.params.id]);
-    if (!livro) return res.status(404).json({ message: "Livro não encontrado" });
+    if (!livro) return res.status(404).json({ message: 'Livro não encontrado' });
     await db.run('DELETE FROM livros WHERE id = ?', [req.params.id]);
     res.status(204).send();
 });
