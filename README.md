@@ -1,112 +1,123 @@
-**Por que Gitflow?** Escolhi este workflow pela necessidade de isolamento. Com ele, garantimos que a branch `main` nunca seja quebrada, pois toda funcionalidade passa por um ciclo de testes na `develop` antes do merge final.
+# API Livraria REST
 
-#  API Livraria REST
-
-Uma API robusta para gerenciamento de acervo de livros, desenvolvida com Node.js e Express, utilizando as melhores práticas de versionamento e automação.
+Uma API para gerenciamento de acervo de livros, desenvolvida com Node.js e Express, seguindo boas práticas de versionamento, qualidade de código e automação.
 
 ---
 
-##  Como Executar o Projeto
+## Como Executar
 
-1. **Clone o repositório:**
-   `git clone https://github.com/seu-usuario/livraria-api.git`
-2. **Instale as dependências:**
-   `npm install`
-3. **Inicie o servidor:**
-   `node index.js`
-4. **Acesse em:** `http://localhost:8080/api/livros`
+### Localmente
 
----
-
-## Interface Web
-A aplicação conta com uma interface visual para facilitar a gestão.
-Para acessar, basta iniciar o servidor e abrir:
-👉 [http://localhost:8080](http://localhost:8080)
-
-Desenvolvido com HTML5, Tailwind CSS e Vanilla JS, consumindo a API de forma assíncrona.
-
-## Endpoints Disponíveis
-
-| Método | Rota | Descrição | Exemplo de Payload (JSON) |
-| :--- | :--- | :--- | :--- |
-| **GET** | `/api/livros` | Lista todos os livros | N/A |
-| GET | `/api/livros?titulo=...` | Busca livros por parte do título | N/A |
-| GET | `/api/livros?autor=...`  | Busca livros por parte do autor  | N/A |
-| **POST** | `/api/livros` | Cadastra um novo livro | `{"titulo": "O Alquimista", "autor": "Paulo Coelho"}` |
-| **DELETE** | `/api/livros/:id` | Remove um livro pelo ID | N/A (Passar ID na URL) |
-| PUT | `/api/livros/:id` | Atualiza dados de um livro | `{"titulo": "Novo Nome"}` |
-
----
-
-## Persistência de Dados
-O projeto utiliza **SQLite** para armazenamento persistente, garantindo que os dados não sejam perdidos ao reiniciar o servidor.
-
-## Conceitos de Microserviços
-A aplicação foi refatorada seguindo a **Separação de Camadas**:
-- `database.js`: Módulo isolado de infraestrutura de dados.
-- `index.js`: Ponto de entrada e gerenciamento de rotas.
-Essa estrutura facilita a escalabilidade, permitindo que o serviço de dados seja facilmente substituído ou isolado em um microserviço dedicado no futuro.
-
-## Dependências Adicionais
-- `sqlite3`: Driver do banco de dados.
-- `sqlite`: Wrapper para suporte a Promises/Async-Await.
-
-## Workflow de Trabalho: Gitflow
-
-Este projeto utiliza o modelo **Gitflow** para garantir a integridade do código em produção:
-
-* **`main`**: Apenas código estável e testado (Produção).
-* **`develop`**: Branch principal para integração de novas funcionalidades.
-* **`feature/*`**: Branches temporárias para o desenvolvimento de rotas específicas (ex: `feature/deletar-livro`).
-
-## Ambiente de Teste e Semente
-Para facilitar os testes, incluímos um script de semente que popula o banco de dados automaticamente.
-
-### Como popular o banco:
-Execute o comando abaixo no terminal:
 ```bash
-npm run seed
+npm install       # Instala as dependências
+npm start         # Inicia o servidor na porta 8080
+npm run seed      # Popula o banco com dados de exemplo
+npm test          # Executa os testes
+npm run lint      # Verifica estilo de código
 ```
 
-## Camada de Validação
-Implementamos o **Zod** para validação de esquemas. Isso garante que:
-- O `titulo` e `autor` sejam obrigatórios em novos cadastros.
-- Ambos os campos tenham no mínimo 3 caracteres.
-- Payload mal formatado retorne um erro `400 Bad Request` detalhado, protegendo o banco de dados.
+### Com Docker
 
-## Executando com Docker
-
-Se você tem o Docker instalado, não precisa configurar o Node.js manualmente.
-
-1. **Construir e subir o container:**
-   ```bash
-   docker-compose up -d --build
-   ```
-
----
-
-## Testes Automatizados
-Utilizamos **Jest** e **Supertest** para garantir a qualidade das rotas.
-Os testes verificam:
-- Disponibilidade da rota de listagem.
-- Persistência correta via POST.
-- Eficácia da validação de dados (Zod).
-
-Para rodar os testes localmente:
 ```bash
-npm test
+docker compose up --build -d    # Sobe o container em background
+docker compose down             # Desliga o container
 ```
 
-## Automação de Workflows (GitHub Actions)
-
-O repositório agora possui dois fluxos de trabalho distintos:
-
-1. **Workflow de Commits (`push`):**
-   - Disparado em envios diretos para `main` e `develop`.
-   - Realiza o setup do ambiente, instalação de dependências e execução de fumaça (smoke test) para garantir que o servidor sobe.
-
-2. **Workflow de Pull Request (`pull_request`):**
-   - Disparado em pedidos de integração de código.
-   - Além do setup e execução, este fluxo foca na validação da qualidade e testes antes de permitir o merge.
+Acesse em: http://localhost:8080
 
 ---
+
+## Endpoints
+
+| Método | Rota | Descrição | Body |
+|:---|:---|:---|:---|
+| GET | `/api/livros` | Lista todos os livros | — |
+| GET | `/api/livros?titulo=...` | Filtra por título | — |
+| GET | `/api/livros?autor=...` | Filtra por autor | — |
+| GET | `/api/livros?titulo=...&autor=...` | Filtra por título e autor | — |
+| POST | `/api/livros` | Cadastra um novo livro | `{"titulo": "...", "autor": "..."}` |
+| PUT | `/api/livros/:id` | Atualiza um livro | `{"titulo": "..."}` |
+| DELETE | `/api/livros/:id` | Remove um livro (404 / 204) | — |
+
+Documentação interativa disponível em: http://localhost:8080/api-docs
+
+---
+
+## Arquitetura
+
+```
+index.js       → rotas, validação Zod, configuração Express e Swagger
+database.js    → setup do SQLite (tabela livros)
+seed.js        → popula o banco com dados de exemplo
+public/        → frontend estático (HTML, CSS, JS)
+```
+
+**Validação:** Zod exige `titulo` e `autor` com mínimo de 3 caracteres. Erros retornam `400 Bad Request`.
+
+**Banco de dados:** SQLite com persistência em `database.db`.
+
+---
+
+## Testes
+
+Jest + Supertest com cobertura de **97%+**. Os testes cobrem:
+
+- Listagem, criação, atualização e remoção de livros
+- Filtros por título, autor e combinado
+- Validação de dados inválidos (Zod)
+- Retorno 404 para recursos inexistentes
+- Retorno 204 para remoção bem-sucedida
+
+---
+
+## Qualidade de Código
+
+### ESLint + eslint-plugin-security (SAST)
+
+Verificação de estilo e análise estática de segurança integradas. Regras aplicadas:
+
+- Aspas simples
+- Indentação de 4 espaços
+- Ponto-e-vírgula obrigatório
+- Detecção de vulnerabilidades conhecidas (injeção, ReDoS, etc.)
+
+### Cobertura de testes
+
+Threshold mínimo de 90% em statements, lines e branches, verificado automaticamente em cada PR.
+
+---
+
+## Workflows (GitHub Actions)
+
+| Evento | Workflows disparados |
+|:---|:---|
+| `push` em main/develop | CI (build + testes), Workflow de Commits |
+| `pull_request` para main/develop | Workflow de PR, Qualidade (SAST + lint + cobertura) |
+| `push` na main | Versionamento automático (semantic-release) |
+
+### Versionamento automático
+
+O `semantic-release` analisa os commits semânticos ao fazer merge na `main` e:
+
+- Gera a próxima versão automaticamente
+- Cria tag e release no GitHub
+- Atualiza o `CHANGELOG.md`
+
+| Tipo de commit | Impacto na versão |
+|:---|:---|
+| `fix:` | patch (1.0.0 → 1.0.1) |
+| `feat:` | minor (1.0.0 → 1.1.0) |
+| `feat!:` / `BREAKING CHANGE` | major (1.0.0 → 2.0.0) |
+
+---
+
+## Gitflow
+
+| Branch | Finalidade |
+|:---|:---|
+| `main` | Produção — código estável e versionado |
+| `develop` | Integração de funcionalidades |
+| `feature/*` | Desenvolvimento de novas funcionalidades |
+| `fix-*` | Correções pontuais |
+
+**Por que Gitflow?** Garante que a `main` nunca seja quebrada — toda funcionalidade passa por testes na `develop` antes do merge final.
