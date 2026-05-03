@@ -1,0 +1,64 @@
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+
+stages:
+  - security
+  - test
+  - build
+
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - node_modules/
+
+# Fase 1: Auditoria de Segurança
+# Verifica vulnerabilidades conhecidas nos pacotes instalados
+auditoria_seguranca:
+  stage: security
+  image: node:20
+  script:
+    - npm audit --audit-level=moderate
+  allow_failure: true # Permite que o pipeline continue mesmo que encontre avisos moderados
+
+# Fase 2: Testes e Artefactos
+# Executa a API, valida a rota e corre os testes guardando o relatório
+testar_e_cobrir:
+  stage: test
+  image: node:20
+  script:
+    - npm ci # Usar 'ci' é uma boa prática em pipelines para garantir versões exatas
+    - node index.js &
+    - sleep 5
+    - curl http://localhost:8080/api/livros
+    - npm test -- --coverage # Gera o relatório de cobertura do Jest
+  artifacts:
+    name: "coverage-$CI_COMMIT_REF_SLUG"
+    paths:
+      - coverage/ # Guarda a pasta de coverage gerada pelos teus testes
+    expire_in: 7 days
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/clover.xml # Integra a cobertura com a interface do GitLab
+
+# Fase 3: Build da Imagem Docker
+# Constrói a imagem da aplicação e envia-a para o GitLab Container Registry
+build_imagem_docker:
+  stage: build
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind # Permite correr o Docker dentro de um contentor Docker
+  before_script:
+    # Autentica no Container Registry do próprio GitLab
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    # Utiliza o teu Dockerfile existente na raiz do projeto
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+  rules:
+    # Executa o build apenas nas branches principais para poupar recursos
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "develop"'
