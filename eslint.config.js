@@ -1,7 +1,9 @@
 const js = require('@eslint/js');
+const security = require('eslint-plugin-security');
 
 module.exports = [
     js.configs.recommended,
+    security.configs.recommended,
     {
         files: ['**/*.js'],
         ignores: ['node_modules/**', 'coverage/**'],
