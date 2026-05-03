@@ -70,4 +70,25 @@ describe('Testes da API de Livraria', () => {
         expect(res.statusCode).toEqual(404);
         expect(res.body.message).toBe('Livro não encontrado');
     });
+
+    it('Deve filtrar livros por título (GET /api/livros?titulo=)', async () => {
+        await request(app).post('/api/livros').send({ titulo: 'Dom Casmurro', autor: 'Machado de Assis' });
+        const res = await request(app).get('/api/livros?titulo=Dom');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.some(l => l.titulo === 'Dom Casmurro')).toBe(true);
+    });
+
+    it('Deve filtrar livros por autor (GET /api/livros?autor=)', async () => {
+        await request(app).post('/api/livros').send({ titulo: 'Memórias Póstumas', autor: 'Machado de Assis' });
+        const res = await request(app).get('/api/livros?autor=Machado');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.some(l => l.autor === 'Machado de Assis')).toBe(true);
+    });
+
+    it('Deve filtrar livros por título e autor combinados (GET /api/livros?titulo=&autor=)', async () => {
+        await request(app).post('/api/livros').send({ titulo: 'Quincas Borba', autor: 'Machado de Assis' });
+        const res = await request(app).get('/api/livros?titulo=Quincas&autor=Machado');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.some(l => l.titulo === 'Quincas Borba')).toBe(true);
+    });
 });
