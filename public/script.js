@@ -13,7 +13,7 @@ async function carregarLivros() {
         const livros = await res.json();
         renderizarTabela(livros);
     } catch (error) {
-        console.error("Erro ao carregar dados:", error);
+        console.error('Erro ao carregar dados:', error);
     }
 }
 
@@ -54,13 +54,13 @@ async function adicionarLivro() {
     }
 }
 
-// Função para excluir
-async function deletarLivro(id) {
+// Exposta no window pois é chamada via onclick no HTML
+window.deletarLivro = async function(id) {
     if (confirm('Tem certeza que deseja remover este livro?')) {
         await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
         carregarLivros();
     }
-}
+};
 
 // Event Listeners
 btnCadastrar.addEventListener('click', adicionarLivro);
