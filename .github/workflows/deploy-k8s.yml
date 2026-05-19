@@ -1,0 +1,49 @@
+name: Deploy Kubernetes (Minikube)
+
+on:
+  workflow_run:
+    workflows: ["Node.js CI (Gitflow)"]
+    branches: [main]
+    types: [completed]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Instalar Minikube
+        run: |
+          curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+          sudo install minikube-linux-amd64 /usr/local/bin/minikube
+
+      - name: Instalar kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Iniciar Minikube
+        run: minikube start --driver=docker
+
+      - name: Carregar imagem do DockerHub no Minikube
+        run: |
+          docker pull jdvdj/livraria-api:latest
+          minikube image load jdvdj/livraria-api:latest
+
+      - name: Aplicar manifests Kubernetes
+        run: |
+          kubectl apply -f k8s/deployment.yml
+          kubectl apply -f k8s/service.yml
+
+      - name: Aguardar rollout
+        run: kubectl rollout status deployment/livraria-api --timeout=120s
+
+      - name: Verificar pods em execução
+        run: kubectl get pods -o wide
+
+      - name: Testar endpoint via Minikube
+        run: |
+          SERVICE_URL=$(minikube service livraria-api --url)
+          echo "URL do serviço: $SERVICE_URL"
+          curl --fail "$SERVICE_URL/api/livros"
