@@ -1,0 +1,26 @@
+# 1.0.0 (2026-05-03)
+
+
+### Bug Fixes
+
+* ajustar identação swagger e middleware de espera do banco ([7dc5ac2](https://github.com/jIDvDIj/livraria-api/commit/7dc5ac208755e12aa3a5d5774f9ca5989f3eecb6))
+* **ci:** atualizar Node.js para v24 no workflow de release ([846484c](https://github.com/jIDvDIj/livraria-api/commit/846484c25bca0353ce9b5aead43280b062430a51))
+* **docs:** formata YAML no JSDoc para corrigir erro de parser do Swagger ([c95c141](https://github.com/jIDvDIj/livraria-api/commit/c95c1411a10119663c797b7ef58dfd989addb2d4))
+* registrar dependências do swagger e corrigir identação YAML ([6fe5d3f](https://github.com/jIDvDIj/livraria-api/commit/6fe5d3f5c01b1712c8f69a779d259a5bdecaae27))
+* registrar rotas de forma síncrona para evitar 404 nos testes ([18b1638](https://github.com/jIDvDIj/livraria-api/commit/18b16388ce1097813e1b8ee9984843b1bd6e995a))
+
+
+### Features
+
+* adicionar busca dinâmica por título e autor ([f917c24](https://github.com/jIDvDIj/livraria-api/commit/f917c24e2bc953797892f777daf6230356cb0b65))
+* adicionar frontend responsivo e configurar CORS ([05f5d00](https://github.com/jIDvDIj/livraria-api/commit/05f5d005eca2ac07b905e0bbcf852b1c204ff6c9))
+* adicionar rota DELETE para remover livros por ID ([aa9fadf](https://github.com/jIDvDIj/livraria-api/commit/aa9fadf409a4b7534c94271e54939f6cb40cba0c))
+* adicionar rota POST para novos livros ([f511182](https://github.com/jIDvDIj/livraria-api/commit/f51118293b4e7acdcb24c92568083de5d9f41a2f))
+* adicionar rota PUT e atualizar documentação ([3842e52](https://github.com/jIDvDIj/livraria-api/commit/3842e5216e3e876fe353cee012a3b6191cf23a2b))
+* adicionar script de seed para banco de dados de teste ([eeaabde](https://github.com/jIDvDIj/livraria-api/commit/eeaabdef28e7f3ac5627aac9ff08b65d8831783d))
+* adicionar validação de esquema com Zod ([eb48481](https://github.com/jIDvDIj/livraria-api/commit/eb48481f6476c8fd178b08dac3ee77fcc6399764))
+* adicionar workflows específicos para commit e pull request ([d4eef04](https://github.com/jIDvDIj/livraria-api/commit/d4eef0477c59fc24416a2036b2c1e51474162856))
+* corrigir rota DELETE /api/livros/:id para retornar 404 e 204 ([d2b5397](https://github.com/jIDvDIj/livraria-api/commit/d2b53978dc230549ad80d53b27cf9620bb3ed432))
+* implementar dockerização da api com docker-compose ([e3c870a](https://github.com/jIDvDIj/livraria-api/commit/e3c870a1e22933f6febc1bf134f5b2c84e7c6dff))
+* implementar persistência com SQLite e separação de camadas ([caa014d](https://github.com/jIDvDIj/livraria-api/commit/caa014d53047a4ec06835e0dcc0a65e3b0fe4e23))
+* implementar rota GET de livros ([86b1f8e](https://github.com/jIDvDIj/livraria-api/commit/86b1f8e2a383555cc24260cbd91ddccef7ee8cff))
