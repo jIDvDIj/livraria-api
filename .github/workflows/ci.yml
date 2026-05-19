@@ -2,7 +2,7 @@ name: Node.js CI (Gitflow)
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: '**'
 
 jobs:
   build:
@@ -23,9 +23,41 @@ jobs:
 
     - name: Verificar se o servidor inicia
       run: |
-        node index.js & 
-        sleep 5 && 
+        node index.js &
+        sleep 5 &&
         curl http://localhost:8080/api/livros
 
     - name: Executar Testes Automatizados
       run: npm test
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    - name: Construir imagem Docker
+      run: docker build -t jdvdj/livraria-api:${{ github.sha }} .
+
+  docker-push:
+    runs-on: ubuntu-latest
+    needs: docker-build
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    - name: Login no DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Publicar imagem no DockerHub
+      run: |
+        docker build -t jdvdj/livraria-api:latest -t jdvdj/livraria-api:${{ github.sha }} .
+        docker push jdvdj/livraria-api:latest
+        docker push jdvdj/livraria-api:${{ github.sha }}

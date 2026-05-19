@@ -1,3 +1,6 @@
 node_modules/
 .env
 database.db
+
+CLAUDE.md
+pedidos-do-professor.md
