@@ -2,6 +2,8 @@
 
 Uma API para gerenciamento de acervo de livros, desenvolvida com Node.js e Express, seguindo boas práticas de versionamento, qualidade de código e automação.
 
+[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-jdvdj%2Flivraria--api-2496ED?logo=docker&logoColor=white)](https://hub.docker.com/r/jdvdj/livraria-api)
+
 ---
 
 ## Como Executar
@@ -91,9 +93,9 @@ Threshold mínimo de 90% em statements, lines e branches, verificado automaticam
 
 | Evento | Workflows disparados |
 |:---|:---|
-| `push` em main/develop | CI (build + testes), Workflow de Commits |
+| `push` em qualquer branch | CI (build + testes), construção da imagem Docker |
+| `push` na main | Publicação da imagem no DockerHub, Versionamento automático (semantic-release) |
 | `pull_request` para main/develop | Workflow de PR, Qualidade (SAST + lint + cobertura) |
-| `push` na main | Versionamento automático (semantic-release) |
 
 ### Versionamento automático
 
