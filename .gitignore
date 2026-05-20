@@ -1,7 +1,6 @@
 node_modules/
 .env
 database.db
-.vagrant/
 
 CLAUDE.md
 pedidos-do-professor.md
