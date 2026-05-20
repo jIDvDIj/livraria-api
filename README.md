@@ -27,6 +27,71 @@ docker compose down             # Desliga o container
 
 Acesse em: http://localhost:8080
 
+### Com Vagrant (VirtualBox)
+
+#### Pré-requisitos
+
+- [VirtualBox](https://www.virtualbox.org/) instalado
+- [Vagrant](https://www.vagrantup.com/) instalado
+
+#### Infraestrutura
+
+| VM | IP privado | Memória | Função |
+|:---|:---|:---|:---|
+| VM1 | `192.168.56.10` | 1024 MB | Cliente de testes (curl) |
+| VM2 | `192.168.56.11` | 1024 MB | Backend Node.js + SQLite |
+
+#### Subindo as VMs
+
+```bash
+# Sobe ambas as VMs (pode demorar na primeira execução — baixa a box e instala dependências)
+vagrant up
+
+# Subir apenas uma VM específica
+vagrant up vm1
+vagrant up vm2
+```
+
+#### Verificando o status
+
+```bash
+vagrant status
+```
+
+#### Testando a rota GET a partir da VM1
+
+1. Acesse a VM1 via SSH:
+
+```bash
+vagrant ssh vm1
+```
+
+2. Dentro da VM1, faça a requisição para a API rodando na VM2:
+
+```bash
+# Listar todos os livros
+curl http://192.168.56.11:8080/api/livros
+
+# Filtrar por título
+curl "http://192.168.56.11:8080/api/livros?titulo=Dom"
+
+# Filtrar por autor
+curl "http://192.168.56.11:8080/api/livros?autor=Machado"
+```
+
+A resposta esperada é um array JSON com os livros cadastrados, por exemplo:
+
+```json
+[{"id":1,"titulo":"Dom Casmurro","autor":"Machado de Assis"}]
+```
+
+#### Desligando as VMs
+
+```bash
+vagrant halt        # Desliga sem destruir
+vagrant destroy -f  # Remove as VMs permanentemente
+```
+
 ---
 
 ## Endpoints
