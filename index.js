@@ -1,5 +1,6 @@
 const express = require('express');
 const { z } = require('zod');
+const rateLimit = require('express-rate-limit');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const setupDb = require('./database');
@@ -11,6 +12,16 @@ const cors = require('cors');
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Muitas requisições, tente novamente mais tarde.' },
+    skip: () => process.env.NODE_ENV === 'test'
+});
+app.use('/api', limiter);
 
 const livroSchema = z.object({
     titulo: z.string().min(3, 'O título deve ter pelo menos 3 caracteres'),
