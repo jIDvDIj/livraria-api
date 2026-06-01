@@ -36,6 +36,21 @@ describe('Testes da API de Livraria', () => {
         expect(res.body).toHaveProperty('id');
     });
 
+    it('Deve criar livro com campo ano (POST /api/livros)', async () => {
+        const res = await request(app)
+            .post('/api/livros')
+            .send({ titulo: 'O Senhor dos Anéis', autor: 'J.R.R. Tolkien', ano: 1954 });
+        expect(res.statusCode).toEqual(201);
+        expect(res.body.ano).toBe(1954);
+    });
+
+    it('Deve rejeitar ano inválido (POST /api/livros)', async () => {
+        const res = await request(app)
+            .post('/api/livros')
+            .send({ titulo: 'Livro Futuro', autor: 'Autor Teste', ano: 9999 });
+        expect(res.statusCode).toEqual(400);
+    });
+
     it('Deve barrar a criação de livro com título inválido (Zod Check)', async () => {
         const res = await request(app)
             .post('/api/livros')

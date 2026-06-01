@@ -14,7 +14,8 @@ app.use(express.static('public'));
 
 const livroSchema = z.object({
     titulo: z.string().min(3, 'O título deve ter pelo menos 3 caracteres'),
-    autor: z.string().min(3, 'O nome do autor deve ter pelo menos 3 caracteres')
+    autor: z.string().min(3, 'O nome do autor deve ter pelo menos 3 caracteres'),
+    ano: z.number().int().min(1000).max(new Date().getFullYear()).optional()
 });
 
 let db;
@@ -121,7 +122,7 @@ app.get('/api/livros/:id', async (req, res) => {
 app.post('/api/livros', async (req, res) => {
     try {
         const dadosValidados = livroSchema.parse(req.body);
-        const result = await db.run('INSERT INTO livros (titulo, autor) VALUES (?, ?)', [dadosValidados.titulo, dadosValidados.autor]);
+        const result = await db.run('INSERT INTO livros (titulo, autor, ano) VALUES (?, ?, ?)', [dadosValidados.titulo, dadosValidados.autor, dadosValidados.ano ?? null]);
         res.status(201).json({ id: result.lastID, ...dadosValidados });
     } catch (error) {
         res.status(400).json({ status: 'Erro de Validação', detalhes: error.errors });
@@ -137,9 +138,10 @@ app.put('/api/livros/:id', async (req, res) => {
         
         const novoTitulo = dadosValidados.titulo || livroExistente.titulo;
         const novoAutor = dadosValidados.autor || livroExistente.autor;
-        
-        await db.run('UPDATE livros SET titulo = ?, autor = ? WHERE id = ?', [novoTitulo, novoAutor, req.params.id]);
-        res.json({ id: req.params.id, titulo: novoTitulo, autor: novoAutor });
+        const novoAno = dadosValidados.ano !== undefined ? dadosValidados.ano : livroExistente.ano;
+
+        await db.run('UPDATE livros SET titulo = ?, autor = ?, ano = ? WHERE id = ?', [novoTitulo, novoAutor, novoAno, req.params.id]);
+        res.json({ id: req.params.id, titulo: novoTitulo, autor: novoAutor, ano: novoAno });
     } catch (error) {
         res.status(400).json({ status: 'Erro de Validação', detalhes: error.errors });
     }

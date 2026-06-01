@@ -11,9 +11,14 @@ async function setupDb() {
         CREATE TABLE IF NOT EXISTS livros (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             titulo TEXT,
-            autor TEXT
+            autor TEXT,
+            ano INTEGER
         )
     `);
+
+    await db.exec(`
+        ALTER TABLE livros ADD COLUMN ano INTEGER
+    `).catch(() => {});
     
     return db;
 }
