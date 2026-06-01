@@ -33,6 +33,7 @@ let db;
 
 const dbPromise = setupDb().then(database => {
     db = database;
+    /* istanbul ignore next */
     if (process.env.NODE_ENV !== 'test') {
         app.listen(PORT, () => console.log(`Servidor rodando em http://localhost:${PORT}`));
     }
@@ -74,7 +75,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
  *         schema:
  *           type: string
  *         description: Parte do nome do autor
- *     parameters:
  *       - in: query
  *         name: page
  *         schema:
@@ -124,7 +124,7 @@ app.get('/api/livros', async (req, res) => {
                 totalPages: Math.ceil(total.count / limit)
             }
         });
-    } catch (error) {
+    } catch {
         res.status(500).json({ message: 'Erro interno do servidor' });
     }
 });
@@ -151,7 +151,7 @@ app.get('/api/livros/:id', async (req, res) => {
         const livro = await db.get('SELECT * FROM livros WHERE id = ?', [req.params.id]);
         if (!livro) return res.status(404).json({ message: 'Livro não encontrado' });
         res.json(livro);
-    } catch (error) {
+    } catch {
         res.status(500).json({ message: 'Erro interno do servidor' });
     }
 });
@@ -190,7 +190,7 @@ app.delete('/api/livros/:id', async (req, res) => {
         if (!livro) return res.status(404).json({ message: 'Livro não encontrado' });
         await db.run('DELETE FROM livros WHERE id = ?', [req.params.id]);
         res.status(204).send();
-    } catch (error) {
+    } catch {
         res.status(500).json({ message: 'Erro interno do servidor' });
     }
 });
