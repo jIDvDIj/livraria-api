@@ -3,6 +3,22 @@ const app = require('./index');
 
 describe('Testes da API de Livraria', () => {
     
+    it('Deve retornar um livro pelo ID (GET /api/livros/:id)', async () => {
+        const resCreate = await request(app).post('/api/livros').send({ titulo: 'Livro ID Teste', autor: 'Autor Teste' });
+        const id = resCreate.body.id;
+
+        const res = await request(app).get(`/api/livros/${id}`);
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.id).toBe(id);
+        expect(res.body.titulo).toBe('Livro ID Teste');
+    });
+
+    it('Deve retornar 404 ao buscar livro inexistente por ID', async () => {
+        const res = await request(app).get('/api/livros/99999');
+        expect(res.statusCode).toEqual(404);
+        expect(res.body.message).toBe('Livro não encontrado');
+    });
+
     it('Deve listar todos os livros (GET /api/livros)', async () => {
         const res = await request(app).get('/api/livros');
         expect(res.statusCode).toEqual(200);

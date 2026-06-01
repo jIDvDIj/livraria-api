@@ -91,6 +91,33 @@ app.get('/api/livros', async (req, res) => {
     }
 });
 
+/**
+ * @openapi
+ * /api/livros/{id}:
+ *   get:
+ *     summary: Retorna um livro pelo ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: Livro encontrado.
+ *       '404':
+ *         description: Livro não encontrado.
+ */
+app.get('/api/livros/:id', async (req, res) => {
+    try {
+        const livro = await db.get('SELECT * FROM livros WHERE id = ?', [req.params.id]);
+        if (!livro) return res.status(404).json({ message: 'Livro não encontrado' });
+        res.json(livro);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro interno do servidor' });
+    }
+});
+
 app.post('/api/livros', async (req, res) => {
     try {
         const dadosValidados = livroSchema.parse(req.body);
