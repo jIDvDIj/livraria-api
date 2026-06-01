@@ -3,6 +3,8 @@
 
 Vagrant.configure("2") do |config|
 
+  config.vm.boot_timeout = 600
+
   # ── VM1 ──────────────────────────────────────────────────────────────────────
   config.vm.define "vm1" do |vm1|
     vm1.vm.box = "ubuntu/focal64"
@@ -40,8 +42,9 @@ Vagrant.configure("2") do |config|
       # Dependências nativas para sqlite3
       apt-get install -y build-essential python3
 
-      # Instala as dependências do projeto
+      # Instala as dependências do projeto compiladas para Linux
       cd /vagrant_data
+      rm -rf node_modules
       npm install --omit=dev
 
       # Cria serviço systemd para a aplicação
