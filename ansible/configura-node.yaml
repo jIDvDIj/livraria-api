@@ -1,0 +1,73 @@
+---
+- name: Configurar Livraria API na VM2
+  hosts: vm2
+  become: true
+
+  vars:
+    app_dir: /opt/livraria-api
+    repo_url: https://github.com/jIDvDIj/livraria-api.git
+
+  tasks:
+    - name: Instalar dependências do sistema
+      apt:
+        name:
+          - git
+          - build-essential
+          - python3
+          - curl
+        state: present
+        update_cache: true
+
+    - name: Adicionar repositório Node.js 20
+      shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+      args:
+        creates: /etc/apt/sources.list.d/nodesource.list
+
+    - name: Instalar Node.js
+      apt:
+        name: nodejs
+        state: present
+        update_cache: true
+
+    - name: Clonar repositório
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: main
+        force: true
+
+    - name: Instalar dependências do projeto
+      command: npm install --omit=dev
+      args:
+        chdir: "{{ app_dir }}"
+
+    - name: Compilar sqlite3 para Linux
+      command: npm rebuild sqlite3 --build-from-source
+      args:
+        chdir: "{{ app_dir }}"
+
+    - name: Criar serviço systemd
+      copy:
+        dest: /etc/systemd/system/livraria-api.service
+        content: |
+          [Unit]
+          Description=Livraria API
+          After=network.target
+
+          [Service]
+          WorkingDirectory={{ app_dir }}
+          ExecStart=/usr/bin/node index.js
+          Restart=always
+          Environment=NODE_ENV=production
+          StandardOutput=journal
+          StandardError=journal
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Habilitar e iniciar serviço
+      systemd:
+        name: livraria-api
+        enabled: true
+        state: started
+        daemon_reload: true

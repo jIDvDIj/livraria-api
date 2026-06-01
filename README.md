@@ -96,6 +96,52 @@ vagrant destroy -f  # Remove as VMs permanentemente
 
 ---
 
+### Com Ansible (provisionamento via VM1)
+
+A VM1 atua como **nó de controle** Ansible e a VM2 como **nó gerenciado**. O playbook clona o repositório na VM2 e configura a aplicação do zero.
+
+#### Pré-requisitos
+
+Subir ambas as VMs normalmente:
+
+```bash
+vagrant up
+```
+
+O Vagrant instala o Ansible na VM1, gera um par de chaves SSH e autoriza a chave na VM2 automaticamente.
+
+#### Executar o playbook
+
+1. Acesse a VM1:
+
+```bash
+vagrant ssh vm1
+```
+
+2. Execute o playbook a partir de `/home/vagrant/ansible`:
+
+```bash
+cd ~/ansible
+ansible-playbook configura-node.yaml
+```
+
+3. Verifique o resultado na VM2:
+
+```bash
+curl http://192.168.56.11:8080
+```
+
+#### Estrutura Ansible
+
+```
+ansible/
+  ansible.cfg          → configuração padrão (inventory, chave SSH, host_key_checking)
+  inventory.ini        → IP e credenciais da VM2
+  configura-node.yaml  → playbook principal
+```
+
+---
+
 ## Endpoints
 
 | Método | Rota | Descrição | Body |
