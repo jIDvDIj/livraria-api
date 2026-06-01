@@ -67,24 +67,28 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
  *         description: Lista de livros filtrada ou completa.
  */
 app.get('/api/livros', async (req, res) => {
-    const { titulo, autor } = req.query;
-    let query = 'SELECT * FROM livros';
-    let params = [];
+    try {
+        const { titulo, autor } = req.query;
+        let query = 'SELECT * FROM livros';
+        let params = [];
 
-    if (titulo || autor) {
-        query += ' WHERE';
-        if (titulo) {
-            query += ' titulo LIKE ?';
-            params.push(`%${titulo}%`);
+        if (titulo || autor) {
+            query += ' WHERE';
+            if (titulo) {
+                query += ' titulo LIKE ?';
+                params.push(`%${titulo}%`);
+            }
+            if (titulo && autor) query += ' AND';
+            if (autor) {
+                query += ' autor LIKE ?';
+                params.push(`%${autor}%`);
+            }
         }
-        if (titulo && autor) query += ' AND';
-        if (autor) {
-            query += ' autor LIKE ?';
-            params.push(`%${autor}%`);
-        }
+        const livros = await db.all(query, params);
+        res.json(livros);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro interno do servidor' });
     }
-    const livros = await db.all(query, params);
-    res.json(livros);
 });
 
 app.post('/api/livros', async (req, res) => {
@@ -115,10 +119,14 @@ app.put('/api/livros/:id', async (req, res) => {
 });
 
 app.delete('/api/livros/:id', async (req, res) => {
-    const livro = await db.get('SELECT * FROM livros WHERE id = ?', [req.params.id]);
-    if (!livro) return res.status(404).json({ message: 'Livro não encontrado' });
-    await db.run('DELETE FROM livros WHERE id = ?', [req.params.id]);
-    res.status(204).send();
+    try {
+        const livro = await db.get('SELECT * FROM livros WHERE id = ?', [req.params.id]);
+        if (!livro) return res.status(404).json({ message: 'Livro não encontrado' });
+        await db.run('DELETE FROM livros WHERE id = ?', [req.params.id]);
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ message: 'Erro interno do servidor' });
+    }
 });
 
 module.exports = app;
