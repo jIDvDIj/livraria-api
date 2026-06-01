@@ -1,3 +1,21 @@
+# [1.3.0](https://github.com/jIDvDIj/livraria-api/compare/v1.2.0...v1.3.0) (2026-06-01)
+
+
+### Bug Fixes
+
+* **api:** adicionar tratamento de erro nas rotas GET e DELETE ([f7c22b9](https://github.com/jIDvDIj/livraria-api/commit/f7c22b9af9192b1e0e5da8db8c1c1309774ad782))
+* **ci:** corrigir chave parameters duplicada no swagger e branches de produção no coverage ([67ce9ad](https://github.com/jIDvDIj/livraria-api/commit/67ce9adf1bd7035cae68cb954a311e2a8c1385cd))
+* **test:** usar banco SQLite em memória nos testes para evitar poluição do banco real ([606a2a1](https://github.com/jIDvDIj/livraria-api/commit/606a2a1f97d7f315ab4ae315bf2ba3ea40a8f195))
+
+
+### Features
+
+* **api:** adicionar campo ano opcional ao modelo de livro ([d5e67e8](https://github.com/jIDvDIj/livraria-api/commit/d5e67e89717e431a635f96c46618f18ce7db4899))
+* **api:** adicionar paginação ao GET /api/livros com metadados de total ([c42cc3a](https://github.com/jIDvDIj/livraria-api/commit/c42cc3abdcca01cf4c73a30f977365b218f0fe2a))
+* **api:** adicionar rota GET /api/livros/:id com testes ([2d00be7](https://github.com/jIDvDIj/livraria-api/commit/2d00be7b9ccac7072b8b9a1f754c4afc38a1f4e0))
+* **config:** usar variável de ambiente PORT com fallback para 8080 ([86a97fa](https://github.com/jIDvDIj/livraria-api/commit/86a97fafc72c92ec8135fd15918bfc4a14a3499e))
+* **security:** adicionar rate limiting de 100 req/15min por IP nas rotas /api ([137f457](https://github.com/jIDvDIj/livraria-api/commit/137f457fc37c9869474379fa8fdbbd65da3ccd0c))
+
 # [1.2.0](https://github.com/jIDvDIj/livraria-api/compare/v1.1.0...v1.2.0) (2026-06-01)
 
 
