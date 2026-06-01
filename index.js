@@ -63,30 +63,56 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
  *         schema:
  *           type: string
  *         description: Parte do nome do autor
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Número da página (padrão 1)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Itens por página (padrão 10)
  *     responses:
  *       '200':
- *         description: Lista de livros filtrada ou completa.
+ *         description: Lista de livros filtrada ou completa com paginação.
  */
 app.get('/api/livros', async (req, res) => {
     try {
         const { titulo, autor } = req.query;
-        let query = 'SELECT * FROM livros';
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 10));
+        const offset = (page - 1) * limit;
+
+        let whereClause = '';
         let params = [];
 
         if (titulo || autor) {
-            query += ' WHERE';
+            whereClause += ' WHERE';
             if (titulo) {
-                query += ' titulo LIKE ?';
+                whereClause += ' titulo LIKE ?';
                 params.push(`%${titulo}%`);
             }
-            if (titulo && autor) query += ' AND';
+            if (titulo && autor) whereClause += ' AND';
             if (autor) {
-                query += ' autor LIKE ?';
+                whereClause += ' autor LIKE ?';
                 params.push(`%${autor}%`);
             }
         }
-        const livros = await db.all(query, params);
-        res.json(livros);
+
+        const total = await db.get(`SELECT COUNT(*) as count FROM livros${whereClause}`, params);
+        const livros = await db.all(`SELECT * FROM livros${whereClause} LIMIT ? OFFSET ?`, [...params, limit, offset]);
+
+        res.json({
+            data: livros,
+            pagination: {
+                total: total.count,
+                page,
+                limit,
+                totalPages: Math.ceil(total.count / limit)
+            }
+        });
     } catch (error) {
         res.status(500).json({ message: 'Erro interno do servidor' });
     }

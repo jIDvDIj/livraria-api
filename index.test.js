@@ -19,10 +19,22 @@ describe('Testes da API de Livraria', () => {
         expect(res.body.message).toBe('Livro não encontrado');
     });
 
-    it('Deve listar todos os livros (GET /api/livros)', async () => {
+    it('Deve listar todos os livros com paginação (GET /api/livros)', async () => {
         const res = await request(app).get('/api/livros');
         expect(res.statusCode).toEqual(200);
-        expect(Array.isArray(res.body)).toBe(true);
+        expect(Array.isArray(res.body.data)).toBe(true);
+        expect(res.body.pagination).toHaveProperty('total');
+        expect(res.body.pagination).toHaveProperty('page');
+        expect(res.body.pagination).toHaveProperty('limit');
+        expect(res.body.pagination).toHaveProperty('totalPages');
+    });
+
+    it('Deve respeitar parâmetros de paginação (GET /api/livros?page=1&limit=2)', async () => {
+        const res = await request(app).get('/api/livros?page=1&limit=2');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.data.length).toBeLessThanOrEqual(2);
+        expect(res.body.pagination.limit).toBe(2);
+        expect(res.body.pagination.page).toBe(1);
     });
 
     it('Deve criar um novo livro com sucesso (POST /api/livros)', async () => {
@@ -106,20 +118,20 @@ describe('Testes da API de Livraria', () => {
         await request(app).post('/api/livros').send({ titulo: 'Dom Casmurro', autor: 'Machado de Assis' });
         const res = await request(app).get('/api/livros?titulo=Dom');
         expect(res.statusCode).toEqual(200);
-        expect(res.body.some(l => l.titulo === 'Dom Casmurro')).toBe(true);
+        expect(res.body.data.some(l => l.titulo === 'Dom Casmurro')).toBe(true);
     });
 
     it('Deve filtrar livros por autor (GET /api/livros?autor=)', async () => {
         await request(app).post('/api/livros').send({ titulo: 'Memórias Póstumas', autor: 'Machado de Assis' });
         const res = await request(app).get('/api/livros?autor=Machado');
         expect(res.statusCode).toEqual(200);
-        expect(res.body.some(l => l.autor === 'Machado de Assis')).toBe(true);
+        expect(res.body.data.some(l => l.autor === 'Machado de Assis')).toBe(true);
     });
 
     it('Deve filtrar livros por título e autor combinados (GET /api/livros?titulo=&autor=)', async () => {
         await request(app).post('/api/livros').send({ titulo: 'Quincas Borba', autor: 'Machado de Assis' });
         const res = await request(app).get('/api/livros?titulo=Quincas&autor=Machado');
         expect(res.statusCode).toEqual(200);
-        expect(res.body.some(l => l.titulo === 'Quincas Borba')).toBe(true);
+        expect(res.body.data.some(l => l.titulo === 'Quincas Borba')).toBe(true);
     });
 });
