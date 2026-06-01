@@ -5,7 +5,7 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const setupDb = require('./database');
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 const cors = require('cors');
 
 app.use(cors());
