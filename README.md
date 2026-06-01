@@ -34,6 +34,8 @@ Acesse em: http://localhost:8080
 - [VirtualBox](https://www.virtualbox.org/) instalado
 - [Vagrant](https://www.vagrantup.com/) instalado
 
+> **Windows com WSL2:** O VirtualBox pode demorar mais para iniciar as VMs devido ao conflito com o Hyper-V. O `boot_timeout` já está configurado para 600 segundos. Se a VM aparecer na tela do VirtualBox mas o `vagrant up` der timeout, rode `vagrant ssh vm1` — geralmente já funciona.
+
 #### Infraestrutura
 
 | VM | IP privado | Memória | Função |
