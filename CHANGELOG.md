@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/jIDvDIj/livraria-api/compare/v1.0.0...v1.1.0) (2026-05-20)
+
+
+### Features
+
+* **vagrant:** adicionar ambiente de desenvolvimento com duas VMs ([3d84004](https://github.com/jIDvDIj/livraria-api/commit/3d84004f91bc8b362dca43d26f2e98e945e92aa6))
+
 # 1.0.0 (2026-05-03)
 
 
