@@ -5,20 +5,39 @@ Vagrant.configure("2") do |config|
 
   config.vm.boot_timeout = 600
 
-  # ── VM1 ──────────────────────────────────────────────────────────────────────
+  # ── VM1 — Nó de Controle Ansible ─────────────────────────────────────────────
   config.vm.define "vm1" do |vm1|
     vm1.vm.box = "ubuntu/focal64"
     vm1.vm.hostname = "vm1"
 
     vm1.vm.network "private_network", ip: "192.168.56.10"
 
+    vm1.vm.synced_folder ".", "/vagrant_data"
+
     vm1.vm.provider "virtualbox" do |vb|
       vb.name   = "livraria-vm1"
       vb.memory = 1024
     end
+
+    vm1.vm.provision "shell", inline: <<-SHELL
+      apt-get update -y
+      apt-get install -y software-properties-common
+      add-apt-repository --yes --update ppa:ansible/ansible
+      apt-get install -y ansible
+
+      # Gerar chave SSH para comunicação com VM2
+      sudo -u vagrant ssh-keygen -t ed25519 -f /home/vagrant/.ssh/ansible_id -N "" -q
+
+      # Salvar chave pública na pasta compartilhada para que VM2 possa lê-la
+      cp /home/vagrant/.ssh/ansible_id.pub /vagrant_data/ansible/ansible_id.pub
+
+      # Copiar arquivos Ansible para o home do vagrant
+      cp -r /vagrant_data/ansible /home/vagrant/ansible
+      chown -R vagrant:vagrant /home/vagrant/ansible
+    SHELL
   end
 
-  # ── VM2 ──────────────────────────────────────────────────────────────────────
+  # ── VM2 — Nó Gerenciado ───────────────────────────────────────────────────────
   config.vm.define "vm2" do |vm2|
     vm2.vm.box = "ubuntu/focal64"
     vm2.vm.hostname = "vm2"
@@ -33,41 +52,9 @@ Vagrant.configure("2") do |config|
     end
 
     vm2.vm.provision "shell", inline: <<-SHELL
-      apt-get update -y
-
-      # Node.js 20 LTS
-      curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-      apt-get install -y nodejs
-
-      # Dependências nativas para sqlite3
-      apt-get install -y build-essential python3
-
-      # Instala as dependências do projeto compiladas para Linux
-      cd /vagrant_data
-      rm -rf node_modules
-      npm install --omit=dev
-
-      # Cria serviço systemd para a aplicação
-      tee /etc/systemd/system/livraria-api.service > /dev/null << SERVICE_UNIT
-[Unit]
-Description=Livraria API
-After=network.target
-
-[Service]
-WorkingDirectory=/vagrant_data
-ExecStart=/usr/bin/node index.js
-Restart=always
-Environment=NODE_ENV=production
-StandardOutput=journal
-StandardError=journal
-
-[Install]
-WantedBy=multi-user.target
-SERVICE_UNIT
-
-      systemctl daemon-reload
-      systemctl enable livraria-api
-      systemctl start livraria-api
+      # Autorizar a chave pública gerada pelo nó de controle (VM1)
+      cat /vagrant_data/ansible/ansible_id.pub >> /home/vagrant/.ssh/authorized_keys
+      chmod 600 /home/vagrant/.ssh/authorized_keys
     SHELL
   end
 
