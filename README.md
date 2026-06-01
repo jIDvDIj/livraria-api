@@ -27,6 +27,119 @@ docker compose down             # Desliga o container
 
 Acesse em: http://localhost:8080
 
+### Com Vagrant (VirtualBox)
+
+#### Pré-requisitos
+
+- [VirtualBox](https://www.virtualbox.org/) instalado
+- [Vagrant](https://www.vagrantup.com/) instalado
+
+> **Windows com WSL2:** O VirtualBox pode demorar mais para iniciar as VMs devido ao conflito com o Hyper-V. O `boot_timeout` já está configurado para 600 segundos. Se a VM aparecer na tela do VirtualBox mas o `vagrant up` der timeout, rode `vagrant ssh vm1` — geralmente já funciona.
+
+#### Infraestrutura
+
+| VM | IP privado | Memória | Função |
+|:---|:---|:---|:---|
+| VM1 | `192.168.56.10` | 1024 MB | Cliente de testes (curl) |
+| VM2 | `192.168.56.11` | 1024 MB | Backend Node.js + SQLite |
+
+#### Subindo as VMs
+
+```bash
+# Sobe ambas as VMs (pode demorar na primeira execução — baixa a box e instala dependências)
+vagrant up
+
+# Subir apenas uma VM específica
+vagrant up vm1
+vagrant up vm2
+```
+
+#### Verificando o status
+
+```bash
+vagrant status
+```
+
+#### Testando a rota GET a partir da VM1
+
+1. Acesse a VM1 via SSH:
+
+```bash
+vagrant ssh vm1
+```
+
+2. Dentro da VM1, faça a requisição para a API rodando na VM2:
+
+```bash
+# Listar todos os livros
+curl http://192.168.56.11:8080/api/livros
+
+# Filtrar por título
+curl "http://192.168.56.11:8080/api/livros?titulo=Dom"
+
+# Filtrar por autor
+curl "http://192.168.56.11:8080/api/livros?autor=Machado"
+```
+
+A resposta esperada é um array JSON com os livros cadastrados, por exemplo:
+
+```json
+[{"id":1,"titulo":"Dom Casmurro","autor":"Machado de Assis"}]
+```
+
+#### Desligando as VMs
+
+```bash
+vagrant halt        # Desliga sem destruir
+vagrant destroy -f  # Remove as VMs permanentemente
+```
+
+---
+
+### Com Ansible (provisionamento via VM1)
+
+A VM1 atua como **nó de controle** Ansible e a VM2 como **nó gerenciado**. O playbook clona o repositório na VM2 e configura a aplicação do zero.
+
+#### Pré-requisitos
+
+Subir ambas as VMs normalmente:
+
+```bash
+vagrant up
+```
+
+O Vagrant instala o Ansible na VM1, gera um par de chaves SSH e autoriza a chave na VM2 automaticamente.
+
+#### Executar o playbook
+
+1. Acesse a VM1:
+
+```bash
+vagrant ssh vm1
+```
+
+2. Execute o playbook a partir de `/home/vagrant/ansible`:
+
+```bash
+cd ~/ansible
+ansible-playbook configura-node.yaml
+```
+
+3. Verifique o resultado na VM2:
+
+```bash
+curl http://192.168.56.11:8080
+```
+
+#### Estrutura Ansible
+
+```
+ansible/
+  ansible.cfg          → configuração padrão (inventory, chave SSH, host_key_checking)
+  inventory.ini        → IP e credenciais da VM2
+  configura-node.yaml  → playbook principal
+```
+
 ---
 
 ## Endpoints

@@ -1,6 +1,8 @@
 node_modules/
 .env
 database.db
+.vagrant/
+ansible/ansible_id.pub
 
 CLAUDE.md
 pedidos-do-professor.md

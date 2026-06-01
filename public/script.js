@@ -1,12 +1,10 @@
 const API_URL = '/api/livros';
 
-// Seletores de DOM
 const listaLivros = document.getElementById('lista-livros');
 const btnCadastrar = document.getElementById('btn-cadastrar');
 const inputTitulo = document.getElementById('titulo');
 const inputAutor = document.getElementById('autor');
 
-// Função para listar livros
 async function carregarLivros() {
     try {
         const res = await fetch(API_URL);
@@ -17,7 +15,6 @@ async function carregarLivros() {
     }
 }
 
-// Função para renderizar o HTML da tabela
 function renderizarTabela(livros) {
     listaLivros.innerHTML = livros.map(l => `
         <tr class="border-t animate-fade-in">
@@ -31,7 +28,6 @@ function renderizarTabela(livros) {
     `).join('');
 }
 
-// Função para cadastrar
 async function adicionarLivro() {
     const payload = {
         titulo: inputTitulo.value,
@@ -62,6 +58,5 @@ window.deletarLivro = async function(id) {
     }
 };
 
-// Event Listeners
 btnCadastrar.addEventListener('click', adicionarLivro);
 window.addEventListener('DOMContentLoaded', carregarLivros);
