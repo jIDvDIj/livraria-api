@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/jIDvDIj/livraria-api/compare/v1.1.0...v1.2.0) (2026-06-01)
+
+
+### Bug Fixes
+
+* **vagrant:** corrigir provisionamento da vm2 para compilar sqlite3 para Linux ([c13bfc9](https://github.com/jIDvDIj/livraria-api/commit/c13bfc9dc458cadeb06758707f53b58ce7583f6b))
+
+
+### Features
+
+* **ansible:** adicionar provisionamento da VM2 via Ansible com clone do repositório ([717c4ea](https://github.com/jIDvDIj/livraria-api/commit/717c4ea69a822bd0949d49618b2726f94e87a152))
+
 # [1.1.0](https://github.com/jIDvDIj/livraria-api/compare/v1.0.0...v1.1.0) (2026-05-20)
 
 
