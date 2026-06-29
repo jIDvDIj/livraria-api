@@ -1,0 +1,69 @@
+---
+- name: Instalar e configurar Netdata para monitoramento
+  hosts: vm2
+  become: true
+
+  vars:
+    alerta_cpu_percentual: 80
+    email_destino: "david02tk@gmail.com"
+
+  tasks:
+    - name: Instalar dependências do sistema
+      apt:
+        name:
+          - curl
+          - wget
+          - stress-ng
+          - mailutils
+          - postfix
+        state: present
+        update_cache: true
+
+    - name: Baixar script de instalação do Netdata
+      get_url:
+        url: https://get.netdata.cloud/kickstart.sh
+        dest: /tmp/netdata-kickstart.sh
+        mode: "0755"
+
+    - name: Instalar Netdata via script oficial
+      command: /tmp/netdata-kickstart.sh --non-interactive --stable-channel --disable-telemetry
+      args:
+        creates: /usr/sbin/netdata
+
+    - name: Garantir que o Netdata está habilitado e iniciado
+      systemd:
+        name: netdata
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: Criar arquivo de alerta de CPU personalizado
+      copy:
+        dest: /etc/netdata/health.d/cpu_alerta.conf
+        owner: netdata
+        group: netdata
+        mode: "0644"
+        content: |
+          alarm: alerta_cpu_alta
+                on: system.cpu
+            lookup: average -3s percentage foreach user,system
+             units: %
+             every: 10s
+              warn: $this > {{ alerta_cpu_percentual }}
+              crit: $this > 95
+              info: Utilização de CPU alta detectada
+                to: sysadmin
+
+    - name: Habilitar envio de e-mail nos alertas do Netdata
+      lineinfile:
+        path: /etc/netdata/health_alarm_notify.conf
+        regexp: "^#?{{ item.chave }}="
+        line: "{{ item.chave }}={{ item.valor }}"
+      loop:
+        - { chave: "SEND_EMAIL", valor: '"YES"' }
+        - { chave: "DEFAULT_RECIPIENT_EMAIL", valor: '"{{ email_destino }}"' }
+
+    - name: Reiniciar Netdata para aplicar configurações de alerta
+      systemd:
+        name: netdata
+        state: restarted
