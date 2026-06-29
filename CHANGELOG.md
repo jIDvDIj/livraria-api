@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/jIDvDIj/livraria-api/compare/v1.3.0...v1.4.0) (2026-06-29)
+
+
+### Features
+
+* **monitoring:** adicionar monitoramento com Netdata e alertas de CPU ([503e9d9](https://github.com/jIDvDIj/livraria-api/commit/503e9d9f599a5f1e4c5fb5cb2ae332c8c452c6b5))
+
 # [1.3.0](https://github.com/jIDvDIj/livraria-api/compare/v1.2.0...v1.3.0) (2026-06-01)
 
 
